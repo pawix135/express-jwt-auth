@@ -192,10 +192,10 @@ let signUp = await fetch("/api/auth/revoke", {
 
 - [/api/user/me](#me) - Return user data
 - Settings
-  - [/api/user/settings/email](#/api/user/email) - Change user email
-  - [/api/user/settings/username](#/) - Change username
+  - [/api/user/settings/email](#apiusersettingsemail) - Change user email
+  - [/api/user/settings/username](#apiusersettingsusername) - Change username
 
-### <a name="/api/user/settings/email"></a> **/api/user/me**
+### **/api/user/me**
 
 ##### Request
 
