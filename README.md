@@ -1,11 +1,8 @@
 # Express JWT Server Authentication
 
-<div style="display: flex; flexDirection: row; gap: 5px; flexWrap: wrap; max-width: 100px;">
-  <span style="font-size: 12px; padding: 5px 10px; background-color: black; border-radius: 25px;">Express</span>
-  <span style="font-size: 12px; padding: 5px 10px; background-color: black; border-radius: 25px;">Jsonwebtoken</span>
-  <span style="font-size: 12px; padding: 5px 10px; background-color: black; border-radius: 25px;">Prisma</span>
-  <span style="font-size: 12px; padding: 5px 10px; background-color: black; border-radius: 25px;">Zod</span>
-</div>
+##
+
+---
 
 ## Installation
 
@@ -19,7 +16,7 @@ npm install
 
 Change `.env.example` in the root of the directory to `.env` and replace variables with corresponding values.
 
-```html
+```bash
 NODE_ENV=<ENVIRONMENT_TYPE>
 PORT=<SERVER_PORT>
 JWT_ACCESS_SECRET=<ACCESS_TOKEN_SECRET>
@@ -54,9 +51,6 @@ node ./dist/server.js
 - [/api/auth/signup](#sign-up-user) - Create user
 - [/api/auth/signin](#sign-in-user) - Sign in user
 - [/api/auth/revoke](#revoke-access-token) - Revoke access token
-  <br /><br />
-
----
 
 ### **Sign up user**
 
@@ -77,6 +71,16 @@ interface SignUp {
 }
 ```
 
+#### Response
+
+```typescript
+interface SignUpResponse {
+  auth: boolean;
+  message: string;
+  error?: string | { mesasge: string; type: AuthErrorType };
+}
+```
+
 ##### Example
 
 ```typescript
@@ -94,6 +98,122 @@ let signUp = await fetch("/api/auth/signup", {
 });
 ```
 
+---
+
+### **Sign in user**
+
+Sets authorization header for access token(30min) and cookie for refresh token(30 days).
+
+##### Request
+
+```http
+POST /api/auth/signin HTTP/1.1
+Content-Type: application/json
+```
+
+##### Request body
+
+```typescript
+interface SignIn {
+  username: string;
+  password: string;
+  redirect_uri?: string;
+}
+```
+
+#### Response
+
+```typescript
+interface SignInResponse {
+  auth: boolean;
+  message: string;
+  error?: string | { mesasge: string; type: AuthErrorType };
+}
+```
+
+##### Example
+
+```typescript
+let data: SignIn = {
+  username: "example",
+  password: "supersecretpassword",
+  redirect_uri: "http://localhost:3000/", // Redirect, no response if authentication is successful
+};
+
+let signUp = await fetch("/api/auth/signup", {
+  method: "POST",
+  body: JSON.stringify(data),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+```
+
+---
+
+### **Revoke access token**
+
+If access token expires hit this route with refresh token to sign new access token.
+
+##### Request
+
+```http
+POST /api/auth/revoke HTTP/1.1
+Cookie: <refresh_token_cookie>
+```
+
+#### Response
+
+```http
+Authorization: <access_token>
+Set-Cookie: <refresh_token>
+```
+
+```typescript
+interface RevokeResponse {
+  auth: boolean;
+  message: string;
+  access_token?: string;
+  error?: string | { mesasge: string; type: AuthErrorType };
+}
+```
+
+##### Example
+
+```typescript
+let signUp = await fetch("/api/auth/revoke", {
+  method: "POST",
+});
+```
+
+---
+
+### **User routes**
+
+- [/api/user/me](#me) - Return user data
+- Settings
+  - [/api/user/settings/email](#/api/user/email) - Change user email
+  - [/api/user/settings/username](#/) - Change username
+
+### <a name="/api/user/settings/email"></a> **/api/user/me**
+
+##### Request
+
+```http
+POST /api/auth/signup HTTP/1.1
+Authorization: Bearer <access_token>
+Content-Type: application/json
+```
+
+##### Request body
+
+```typescript
+interface SignUp {
+  username: string;
+  password: string;
+}
+```
+
 #### Response
 
 ```typescript
@@ -102,6 +222,111 @@ interface SignUpResponse {
   message: string;
   error?: string | { mesasge: string; type: AuthErrorType };
 }
+```
+
+##### Example
+
+```typescript
+let data: SignUp = {
+  username: "example",
+  password: "supersecretpassword",
+};
+
+let signUp = await fetch("/api/auth/signup", {
+  method: "POST",
+  body: JSON.stringify(data),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+```
+
+---
+
+### **Sign in user**
+
+Sets authorization header for access token(30min) and cookie for refresh token(30 days).
+
+##### Request
+
+```http
+POST /api/auth/signin HTTP/1.1
+Content-Type: application/json
+```
+
+##### Request body
+
+```typescript
+interface SignIn {
+  username: string;
+  password: string;
+  redirect_uri?: string;
+}
+```
+
+#### Response
+
+```typescript
+interface SignInResponse {
+  auth: boolean;
+  message: string;
+  error?: string | { mesasge: string; type: AuthErrorType };
+}
+```
+
+##### Example
+
+```typescript
+let data: SignIn = {
+  username: "example",
+  password: "supersecretpassword",
+  redirect_uri: "http://localhost:3000/", // Redirect, no response if authentication is successful
+};
+
+let signUp = await fetch("/api/auth/signup", {
+  method: "POST",
+  body: JSON.stringify(data),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+```
+
+---
+
+### **Revoke access token**
+
+If access token expires hit this route with refresh token to sign new access token.
+
+##### Request
+
+```http
+POST /api/auth/revoke HTTP/1.1
+Cookie: <refresh_token_cookie>
+```
+
+#### Response
+
+```http
+Authorization: <access_token>
+Set-Cookie: <refresh_token>
+```
+
+```typescript
+interface RevokeResponse {
+  auth: boolean;
+  message: string;
+  access_token?: string;
+  error?: string | { mesasge: string; type: AuthErrorType };
+}
+```
+
+##### Example
+
+```typescript
+let signUp = await fetch("/api/auth/revoke", {
+  method: "POST",
+});
 ```
 
 ---
