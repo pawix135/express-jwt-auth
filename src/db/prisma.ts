@@ -1,13 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import userExtension from "./extensions/user_extension";
 
-interface CustomNodeJsGlobal {
-  prisma: PrismaClient;
-}
-
-declare const global: CustomNodeJsGlobal;
-
-const prisma = global.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV === "development") global.prisma = prisma;
+const prisma = new PrismaClient().$extends(userExtension);
 
 export { prisma };

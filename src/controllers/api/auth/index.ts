@@ -48,12 +48,9 @@ export const authController: AuthController = {
         });
       }
 
-      await prisma.user.create({
-        data: {
-          hash: await hash(data.password, 10),
-          username: data.username,
-        },
-      });
+      let hashedPassword = await hash(data.password, 10);
+
+      await prisma.user.signUp(data.username, hashedPassword);
 
       return res.json({ ok: true, message: "Account created!" });
     } catch (error) {

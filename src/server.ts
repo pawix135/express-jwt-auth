@@ -9,33 +9,35 @@ import cookieParser from "cookie-parser";
 import apiRoute from "@/routes/api";
 import logger from "./middlewares/logger";
 
+// Initiate express server
 const app = express();
 
+// Requests logger
 app.use(logger);
 
-app.use(
-  helmet({
-    hidePoweredBy: true,
-  })
-);
+// Security and cors
+app.use(helmet());
 app.use(
   cors({
     credentials: true,
   })
 );
 
+// Cookies, body and url parsers
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Apply routes
 app.use("/api", apiRoute);
 
+// Handle not implemented routes
 app.use("*", (_req, res) => {
-  res.status(401).end();
+  res.status(404).end();
 });
 
-const PORT = process.env.PORT ?? 80;
-
+// Start server
+const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
   console.log(`Listening on http://localhost:${PORT}`);
 });

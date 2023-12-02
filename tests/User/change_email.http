@@ -1,0 +1,8 @@
+
+POST http://localhost:{{port}}/api/user/settings/email HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJwYXdpeCIsImlhdCI6MTcwMTUzOTE2NCwiZXhwIjoxNzAxNTM5NDY0fQ.7z2PXwj5jXxj_LKcFVOCWyXhK-uhdxX2qlLwwbVRgEo
+Content-Type: application/json
+
+{
+  "email": "pawelbul01@gmail.com"
+}
