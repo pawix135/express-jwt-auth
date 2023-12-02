@@ -48,11 +48,13 @@ node ./dist/server.js
 
 ### Auth routes
 
-- [/api/auth/signup](#sign-up-user) - Create user
-- [/api/auth/signin](#sign-in-user) - Sign in user
-- [/api/auth/revoke](#revoke-access-token) - Revoke access token
+- [/api/auth/signup](#apiauthsignup) - Create new user account
+- [/api/auth/signin](#apiauthsignin) - Sign in user
+- [/api/auth/revoke](#apiauthrevoke) - Revoke access token
 
-### **Sign up user**
+### **/api/auth/signup**
+
+Create new user account
 
 ##### Request
 
@@ -71,7 +73,7 @@ interface SignUp {
 }
 ```
 
-#### Response
+##### Response
 
 ```typescript
 interface SignUpResponse {
@@ -100,9 +102,9 @@ let signUp = await fetch("/api/auth/signup", {
 
 ---
 
-### **Sign in user**
+### **/api/auth/signin**
 
-Sets authorization header for access token(30min) and cookie for refresh token(30 days).
+Signs in user and sets authorization header for access token(30min) and cookie for refresh token(30 days).
 
 ##### Request
 
@@ -121,7 +123,7 @@ interface SignIn {
 }
 ```
 
-#### Response
+##### Response
 
 ```typescript
 interface SignInResponse {
@@ -151,9 +153,9 @@ let signUp = await fetch("/api/auth/signup", {
 
 ---
 
-### **Revoke access token**
+### **/api/auth/revoke**
 
-If access token expires hit this route with refresh token to sign new access token.
+Revokes access token
 
 ##### Request
 
@@ -162,7 +164,7 @@ POST /api/auth/revoke HTTP/1.1
 Cookie: <refresh_token_cookie>
 ```
 
-#### Response
+##### Response
 
 ```http
 Authorization: <access_token>
@@ -191,16 +193,47 @@ let signUp = await fetch("/api/auth/revoke", {
 ### **User routes**
 
 - [/api/user/me](#apiuserme) - Return user data
-- Settings
-  - [/api/user/settings/email](#apiusersettingsemail) - Change user email
-  - [/api/user/settings/username](#apiusersettingsusername) - Change username
+- [/api/user/settings](#apiusersettings) - Change selected settings
+- [/api/user/settings/email](#apiusersettingsemail) - Change user email
+- [/api/user/settings/username](#apiusersettingsusername) - Change user username
+- [/api/user/settings/password](#apiusersettingspassword) - Change user password
 
 ### **/api/user/me**
 
 ##### Request
 
 ```http
-POST /api/auth/signup HTTP/1.1
+GET /api/user/me HTTP/1.1
+Authorization: Bearer <access_token>
+```
+
+##### Response
+
+```typescript
+interface UserMeResponse {
+  user: User;
+  error?: string | { mesasge: string; type: AuthErrorType };
+}
+```
+
+##### Example
+
+```typescript
+let user = await fetch("/api/user/me", {
+  method: "GET",
+});
+```
+
+---
+
+### **/api/user/settings**
+
+Set selected user settings
+
+##### Request
+
+```http
+POST /api/user/settings HTTP/1.1
 Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
@@ -208,18 +241,18 @@ Content-Type: application/json
 ##### Request body
 
 ```typescript
-interface SignUp {
-  username: string;
-  password: string;
+interface UserSettings {
+  email?: string;
+  username?: string;
+  password?: string;
 }
 ```
 
-#### Response
+##### Response
 
 ```typescript
-interface SignUpResponse {
-  auth: boolean;
-  message: string;
+interface UserSettingsResponse {
+  ok: boolean;
   error?: string | { mesasge: string; type: AuthErrorType };
 }
 ```
@@ -227,67 +260,18 @@ interface SignUpResponse {
 ##### Example
 
 ```typescript
-let data: SignUp = {
-  username: "example",
-  password: "supersecretpassword",
+let data: UserSettings = {
+  username: "example-2",
+  password: "supersecretpassword123!@#$%",
+  email: "user123@example.com"
 };
 
-let signUp = await fetch("/api/auth/signup", {
+let settingsResponse = await fetch("/api/user/settings", {
   method: "POST",
   body: JSON.stringify(data),
   headers: {
     "Content-Type": "application/json",
-  },
-});
-```
-
----
-
-### **/api/user/settings/email**
-
-Sets authorization header for access token(30min) and cookie for refresh token(30 days).
-
-##### Request
-
-```http
-POST /api/auth/signin HTTP/1.1
-Content-Type: application/json
-```
-
-##### Request body
-
-```typescript
-interface SignIn {
-  username: string;
-  password: string;
-  redirect_uri?: string;
-}
-```
-
-#### Response
-
-```typescript
-interface SignInResponse {
-  auth: boolean;
-  message: string;
-  error?: string | { mesasge: string; type: AuthErrorType };
-}
-```
-
-##### Example
-
-```typescript
-let data: SignIn = {
-  username: "example",
-  password: "supersecretpassword",
-  redirect_uri: "http://localhost:3000/", // Redirect, no response if authentication is successful
-};
-
-let signUp = await fetch("/api/auth/signup", {
-  method: "POST",
-  body: JSON.stringify(data),
-  headers: {
-    "Content-Type": "application/json",
+    "Authorization": localStorage.get("atoken");
   },
 });
 ```
@@ -296,27 +280,28 @@ let signUp = await fetch("/api/auth/signup", {
 
 ### **/api/user/settings/username**
 
-If access token expires hit this route with refresh token to sign new access token.
+Changes user username
 
 ##### Request
 
 ```http
-POST /api/auth/revoke HTTP/1.1
-Cookie: <refresh_token_cookie>
+POST /api/user/settings/username HTTP/1.1
+Authorization: Bearer <access_token>
 ```
 
-#### Response
-
-```http
-Authorization: <access_token>
-Set-Cookie: <refresh_token>
-```
+##### Request body
 
 ```typescript
-interface RevokeResponse {
-  auth: boolean;
-  message: string;
-  access_token?: string;
+interface UserSettingsUsername {
+  username: string;
+}
+```
+
+###### Response
+
+```typescript
+interface UserSettingsResponse {
+  ok: boolean;
   error?: string | { mesasge: string; type: AuthErrorType };
 }
 ```
@@ -324,8 +309,111 @@ interface RevokeResponse {
 ##### Example
 
 ```typescript
-let signUp = await fetch("/api/auth/revoke", {
+let data: UserSettingsUsername = {
+  username: "new_username"
+};
+
+let usernameResponse = await fetch("/api/user/settings/username", {
   method: "POST",
+  body: JSON.stringify(data),
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": localStorage.get("atoken");
+  },
+});
+```
+
+---
+
+### **/api/user/settings/email**
+
+Changes user email
+
+##### Request
+
+```http
+POST /api/user/settings/email HTTP/1.1
+Authorization: Bearer <access_token>
+```
+
+##### Request body
+
+```typescript
+interface UserSettingsEmail {
+  email: string;
+}
+```
+
+###### Response
+
+```typescript
+interface UserSettingsResponse {
+  ok: boolean;
+  error?: string | { mesasge: string; type: AuthErrorType };
+}
+```
+
+##### Example
+
+```typescript
+let data: UserSettingsUsername = {
+  email: "newuseremail@example.com"
+};
+
+let emailResponse = await fetch("/api/user/settings/email", {
+  method: "POST",
+  body: JSON.stringify(data),
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": localStorage.get("atoken");
+  },
+});
+```
+
+---
+
+### **/api/user/settings/password**
+
+Changes user password
+
+##### Request
+
+```http
+POST /api/user/settings/password HTTP/1.1
+Authorization: Bearer <access_token>
+```
+
+##### Request body
+
+```typescript
+interface UserSettingsPassword {
+  passowrd: string;
+}
+```
+
+###### Response
+
+```typescript
+interface UserSettingsResponse {
+  ok: boolean;
+  error?: string | { mesasge: string; type: AuthErrorType };
+}
+```
+
+##### Example
+
+```typescript
+let data: UserSettingsPassword = {
+  password: "ultarnewpassword123@!"
+};
+
+let passwordChangeResponse = await fetch("/api/user/settings/pasword", {
+  method: "POST",
+  body: JSON.stringify(data),
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": localStorage.get("atoken");
+  },
 });
 ```
 
