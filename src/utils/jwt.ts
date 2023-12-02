@@ -1,7 +1,7 @@
-import { User } from "@/@types/User";
+import { Token } from "@/@types/Token";
 import { sign, verify, JwtPayload } from "jsonwebtoken";
 
-export const createAccessToken = (user: User): string => {
+export const createAccessToken = (user: Token): string => {
   try {
     let token = sign(
       {
@@ -30,7 +30,7 @@ export const verifyAccessToken = (
   }
 };
 
-export const createRefreshToken = (user: User): string | null | JwtPayload => {
+export const createRefreshToken = (user: Token): string | null | JwtPayload => {
   try {
     let token = sign(
       {

@@ -33,7 +33,8 @@
       "@/controllers/api/*": ["./src/controllers/api/*"],
       "@/controllers/*": ["./src/controllers/*"],
       "@/routes/*": ["./src/routes/*"],
-      "@/routes/auth/*": ["./src/routes/api/auth/*"]
+      "@/routes/auth/*": ["./src/routes/api/auth/*"],
+      "@/routes/user/*": ["./src/routes/api/user/*"]
     }
   }
 }

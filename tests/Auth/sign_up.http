@@ -1,0 +1,8 @@
+
+POST http://localhost:{{port}}/api/auth/signup HTTP/1.1
+content-type: application/json
+
+{
+    "username": "pawix",
+    "password": "123"
+}

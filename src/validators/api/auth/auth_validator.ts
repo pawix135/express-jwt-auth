@@ -8,4 +8,10 @@ export const signInSchema = z.object({
   password: z.string(),
 });
 
+export const signUpSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+});
+
 export type SignIn = z.infer<typeof signInSchema>;
+export type SignUp = z.infer<typeof signUpSchema>;

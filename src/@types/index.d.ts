@@ -10,6 +10,5 @@ declare module "jsonwebtoken" {
   interface JwtPayload {
     username: string;
     id: number;
-    email: string;
   }
 }

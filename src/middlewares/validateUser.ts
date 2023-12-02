@@ -10,8 +10,11 @@ export const validateUser = (
 ) => {
   try {
     let token = getAccessToken(req.headers);
+    console.log(token);
 
     let validateToken = verifyAccessToken(token!) as JwtPayload;
+    console.log(validateToken);
+
     if (!validateToken) res.status(402).end();
 
     req["context"] = {
