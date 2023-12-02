@@ -190,7 +190,7 @@ let signUp = await fetch("/api/auth/revoke", {
 
 ### **User routes**
 
-- [/api/user/me](#me) - Return user data
+- [/api/user/me](#apiuserme) - Return user data
 - Settings
   - [/api/user/settings/email](#apiusersettingsemail) - Change user email
   - [/api/user/settings/username](#apiusersettingsusername) - Change username
@@ -243,7 +243,7 @@ let signUp = await fetch("/api/auth/signup", {
 
 ---
 
-### **Sign in user**
+### **/api/user/settings/email**
 
 Sets authorization header for access token(30min) and cookie for refresh token(30 days).
 
@@ -294,7 +294,7 @@ let signUp = await fetch("/api/auth/signup", {
 
 ---
 
-### **Revoke access token**
+### **/api/user/settings/username**
 
 If access token expires hit this route with refresh token to sign new access token.
 
