@@ -59,6 +59,37 @@ const userExtension = Prisma.defineExtension({
 
         return true;
       },
+      async setPassword(id: number, hash: string) {
+        try {
+          await prisma.user.update({
+            where: {
+              id,
+            },
+            data: {
+              hash,
+            },
+          });
+          return true;
+        } catch (error) {
+          console.error(error);
+          return false;
+        }
+      },
+      async setUsername(id: number, username: string) {
+        try {
+          await prisma.user.update({
+            where: {
+              id,
+            },
+            data: {
+              username,
+            },
+          });
+          return true;
+        } catch (error) {
+          return false;
+        }
+      },
     },
   },
 });

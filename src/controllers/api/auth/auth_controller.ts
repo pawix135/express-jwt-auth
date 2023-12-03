@@ -15,11 +15,16 @@ import { JwtPayload } from "jsonwebtoken";
 import { hash, compare } from "bcrypt";
 import { prisma } from "@/db/prisma";
 import { Prisma } from "@prisma/client";
-import { AuthResponse } from "@/@types/API/Auth";
+import {
+  AuthResponse,
+  AuthRevokeResponse,
+  AuthSignInResponse,
+} from "@/@types/API/Auth";
+import { response } from "@/utils/response";
 
 type AuthController = (
   req: Request,
-  res: Response<AuthResponse>,
+  res: Response,
   next: NextFunction
 ) => Promise<any> | any;
 
@@ -38,13 +43,13 @@ export const POST_SIGN_UP: AuthController = async (req, res) => {
 
     await prisma.user.signUp(username, hashedPassword);
 
-    return res.json({ auth: true, endpoint: req.path });
+    return response<AuthResponse>(res, { auth: true, endpoint: req.path });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // Unique constraint violation
       if (error.code === "P2002") {
-        return res.json({
-          auth: false,
+        return response<AuthResponse>(res, {
+          auth: true,
           endpoint: req.path,
           error: {
             message: "Username already taken!",
@@ -55,7 +60,7 @@ export const POST_SIGN_UP: AuthController = async (req, res) => {
     }
 
     console.error("Internal error", error);
-    return res.json({
+    return response<AuthResponse>(res, {
       auth: false,
       endpoint: req.path,
       error: {
@@ -77,7 +82,7 @@ export const POST_SIGN_IN: AuthController = async (req, res) => {
     });
 
     if (!user) {
-      return res.json({
+      return response(res, {
         auth: false,
         endpoint: req.path,
         error: {
@@ -90,7 +95,7 @@ export const POST_SIGN_IN: AuthController = async (req, res) => {
     let comparePasswords = await compare(password, user.hash);
 
     if (!comparePasswords) {
-      return res.json({
+      return response<AuthResponse>(res, {
         auth: false,
         endpoint: req.path,
         error: {
@@ -117,14 +122,14 @@ export const POST_SIGN_IN: AuthController = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 30,
     });
 
-    return res.json({
+    return response<AuthSignInResponse>(res, {
       auth: true,
       endpoint: req.path,
       access_token: accessToken,
     });
   } catch (error) {
     console.error(error);
-    return res.json({
+    return response<AuthResponse>(res, {
       auth: false,
       endpoint: req.path,
       error: {
@@ -138,12 +143,12 @@ export const POST_SIGN_IN: AuthController = async (req, res) => {
 export const POST_CHECK_ACCESS_TOKEN: AuthController = (req, res) => {
   try {
     let token = getAccessToken(req.headers);
-    verifyAccessToken(token!);
+    verifyAccessToken(token);
 
-    return res.json({ auth: true, endpoint: req.path });
+    return response<AuthResponse>(res, { auth: true, endpoint: req.path });
   } catch (error) {
     console.error(error);
-    return res.json({
+    return response<AuthResponse>(res, {
       auth: false,
       endpoint: req.path,
       error: {
@@ -167,7 +172,7 @@ export const POST_REVOKE_ACCESS_TOKEN: AuthController = (req, res) => {
       username: refreshToken.username,
     });
 
-    return res.json({
+    return response<AuthRevokeResponse>(res, {
       auth: true,
       endpoint: req.path,
       access_token: newAccessToken,

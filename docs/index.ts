@@ -31,6 +31,23 @@ interface XD {
         basePath: "/api/auth",
         subsection: [
           {
+            title: "/signup",
+            subtitle: "Create new user account",
+            request: {
+              http: "POST /api/auth/signup HTTP/1.1",
+              headers: ["Content-Type: application/json"],
+            },
+            requestBody: `interface SignUp {
+  username: string;
+  password: string;
+}`,
+            responseBody: `interface SignUpResponse {
+  auth: boolean;
+  message: string;
+  error?: AuthError;
+}`,
+          },
+          {
             title: "/signin",
             subtitle:
               "Signs in user and sets authorization header for access token(30min) and cookie for refresh token(30 days).",
@@ -44,11 +61,10 @@ interface XD {
   redirect_uri?: string;
 }`,
             responseBody: `interface SignInResponse {
-                    auth: boolean;
-                    message: string;
-                    error?: AuthError;
-                  }
-                  `,
+  auth: boolean;
+  message: string;
+  error?: AuthError;
+} `,
           },
         ],
       },
@@ -72,17 +88,40 @@ interface XD {
       newDocFile += "\n";
 
       await Promise.all(
-        section.subsection.map((sub) => {
+        section.subsection.map(async (sub) => {
           let path = section.basePath + sub.title;
+          let headers: string = sub.request.headers
+            ? sub.request.headers.join("\n")
+            : "";
 
+          // Title
           newDocFile += `### **${path}**\n\n`;
+
+          // Subtitle
           newDocFile += `${sub.subtitle}\n\n`;
+
+          // Request section
           newDocFile += "#### Request\n\n";
-          newDocFile += "```http\n" + sub.request.http + "\n```\n\n";
+          newDocFile += "```http\n";
+          newDocFile += `${sub.request.http}\n`;
+          newDocFile += `${headers}\n`;
+          newDocFile += "```\n\n";
+
+          // Request body section
           newDocFile += "#### Request body\n\n";
           newDocFile += "```typescript\n";
           newDocFile += sub.requestBody + "\n";
           newDocFile += "```\n\n";
+
+          // Response section
+          newDocFile += "#### Response\n\n";
+          newDocFile += "```typescript\n";
+          newDocFile += sub.responseBody + "\n";
+          newDocFile += "```\n\n";
+
+          //Example body
+
+          newDocFile += "---\n\n";
         })
       );
     })

@@ -16,5 +16,12 @@ interface AuthError extends APIError<AuthErrorType> {}
 
 export interface AuthResponse extends APIResponse<AuthError> {
   auth: boolean;
-  access_token?: string;
+}
+
+export interface AuthSignInResponse extends AuthResponse {
+  access_token: string;
+}
+
+export interface AuthRevokeResponse extends AuthResponse {
+  access_token: string;
 }
