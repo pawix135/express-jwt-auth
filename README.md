@@ -1,9 +1,5 @@
 # Express JWT Server Authentication
 
-##
-
----
-
 ## Installation
 
 Install with npm
@@ -17,11 +13,11 @@ npm install
 Change `.env.example` in the root of the directory to `.env` and replace variables with corresponding values.
 
 ```bash
-NODE_ENV=<ENVIRONMENT_TYPE>
-PORT=<SERVER_PORT>
-JWT_ACCESS_SECRET=<ACCESS_TOKEN_SECRET>
-JWT_REFRESH_SECRET=<REFRESH_TOKEN_SECRET>
-DATABASE_URL=<DATABASE_URL>
+NODE_ENV=<ENVIRONMENT_TYPE> # production | development
+PORT=<SERVER_PORT> # 8080
+JWT_ACCESS_SECRET=<ACCESS_TOKEN_SECRET> # openssl rand -base64 32
+JWT_REFRESH_SECRET=<REFRESH_TOKEN_SECRET> # openssl rand -base64 32
+DATABASE_URL=<DATABASE_URL> # Your Postgres database provider url
 ```
 
 Generate Prisma types and create migration.
@@ -42,6 +38,19 @@ Build and run
 ```bash
 npm run build
 node ./dist/server.js
+```
+
+## Database
+
+The Postgresql database is built on top of Prisma ORM. Right now there's only one model
+
+```prisma
+model User {
+  id Int @id @default(autoincrement())
+  username String @unique
+  hash String
+  email String? @unique
+}
 ```
 
 ## API References
@@ -79,7 +88,7 @@ interface SignUp {
 interface SignUpResponse {
   auth: boolean;
   message: string;
-  error?: string | { mesasge: string; type: AuthErrorType };
+  error?: AuthError;
 }
 ```
 
@@ -129,7 +138,7 @@ interface SignIn {
 interface SignInResponse {
   auth: boolean;
   message: string;
-  error?: string | { mesasge: string; type: AuthErrorType };
+  error?: AuthError;
 }
 ```
 
@@ -176,7 +185,7 @@ interface RevokeResponse {
   auth: boolean;
   message: string;
   access_token?: string;
-  error?: string | { mesasge: string; type: AuthErrorType };
+  error?: AuthError;
 }
 ```
 
@@ -212,7 +221,7 @@ Authorization: Bearer <access_token>
 ```typescript
 interface UserMeResponse {
   user: User;
-  error?: string | { mesasge: string; type: AuthErrorType };
+  error?: UserError;
 }
 ```
 
@@ -253,7 +262,7 @@ interface UserSettings {
 ```typescript
 interface UserSettingsResponse {
   ok: boolean;
-  error?: string | { mesasge: string; type: AuthErrorType };
+  error?: UserError;
 }
 ```
 
@@ -302,7 +311,7 @@ interface UserSettingsUsername {
 ```typescript
 interface UserSettingsResponse {
   ok: boolean;
-  error?: string | { mesasge: string; type: AuthErrorType };
+  error?: UserError;
 }
 ```
 
@@ -349,7 +358,7 @@ interface UserSettingsEmail {
 ```typescript
 interface UserSettingsResponse {
   ok: boolean;
-  error?: string | { mesasge: string; type: AuthErrorType };
+  error?: UserError;
 }
 ```
 
@@ -396,7 +405,7 @@ interface UserSettingsPassword {
 ```typescript
 interface UserSettingsResponse {
   ok: boolean;
-  error?: string | { mesasge: string; type: AuthErrorType };
+  error?: UserError;
 }
 ```
 
@@ -419,14 +428,23 @@ let passwordChangeResponse = await fetch("/api/user/settings/pasword", {
 
 ---
 
-<!--
+## Error handling
 
-```html
-  NODE_ENV=<ENVIRONMENT_TYPE>
-  PORT=<SERVER_PORT>
-  JWT_ACCESS_SECRET=<ACCESS_TOKEN_SECRET>
-  JWT_REFRESH_SECRET=<REFRESH_TOKEN_SECRET>
-  DATABASE_URL=<DATABASE_URL>
+Each API Endpoint return Error object that extends to corresponding route.
+
+**Error interfacje**
+
+```typescript
+interface APIError {
+  error: {
+    message: string;
+    type: ErrorType;
+  };
+}
 ```
 
- -->
+**AuthError**
+
+```typescript
+interface AuthError extends APIError {}
+```

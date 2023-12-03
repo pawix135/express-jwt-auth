@@ -11,6 +11,7 @@ export const validateUser = (
 ) => {
   try {
     let token = getAccessToken(req.headers);
+    console.log(token);
 
     let validateToken = verifyAccessToken(token!) as JwtPayload;
 
@@ -23,6 +24,8 @@ export const validateUser = (
 
     next();
   } catch (error) {
+    console.log(req.headers);
+
     res.status(401).end();
   }
 };

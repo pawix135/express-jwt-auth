@@ -12,8 +12,6 @@ type UserController = {
 
 export const userSettingsController: UserController = {
   POST_CHANGE_EMAIL: async (req, res) => {
-    console.log("test");
-
     try {
       let data = UserChangeEmailSchema.parse(req.body);
 
@@ -26,7 +24,6 @@ export const userSettingsController: UserController = {
       return res.json({ ok: true, message: "Email successfuly changed!" });
     } catch (error) {
       console.log(error);
-
       return res.status(402).end();
     }
   },

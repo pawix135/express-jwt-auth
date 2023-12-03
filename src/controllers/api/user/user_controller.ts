@@ -1,7 +1,5 @@
 import { prisma } from "@/db/prisma";
-import { exclude } from "@/utils/db";
 import { UserChangeEmailSchema } from "@/validators/api/user/user_validator";
-import { User } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 
 type UserController = {
@@ -14,11 +12,15 @@ type UserController = {
 
 export const userController: UserController = {
   GET_ME: async (req, res) => {
+    console.log(req.headers.authorization);
+
     let user = await prisma.user.me(req.context.id);
 
     if (!user) {
       return res.json({ ok: false, message: "User not found" });
     }
+
+    console.log(req.cookies);
 
     return res.json({ me: user });
   },

@@ -19,10 +19,18 @@ app.use(logger);
 app.use(helmet());
 app.use(
   cors({
+    origin: ["http://localhost:5173"],
     credentials: true,
   })
 );
-
+/**
+ * Code blocks are great for examples
+ *
+ * ```ts
+ * // run typedoc --help for a list of supported languages
+ * const instance = new MyClass();
+ * ```
+ */
 // Cookies, body and url parsers
 app.use(cookieParser());
 app.use(express.json());

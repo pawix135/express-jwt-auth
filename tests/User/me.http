@@ -1,3 +1,4 @@
 
 GET http://localhost:{{port}}/api/user/me HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJwYXdpeCIsImlhdCI6MTcwMTUzNzk2OSwiZXhwIjoxNzAxNTM4MjY5fQ.x7GxZcxu_tSS5yH-O4bommc9PX0AySjFbUF0YAkorcs
+Cookie: itoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJwYXdpeCIsImlhdCI6MTcwMTU0OTQ2NSwiZXhwIjoxNzAxNTUxMjY1fQ.Wm9FCnceV-Kiar3EefFoJo7gSFypZvC7QJ1D0YpBYkU; Max-Age=2592000; Path=/; Expires=Mon, 01 Jan 2024 20:37:45 GMT; HttpOnly
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJwYXdpeCIsImlhdCI6MTcwMTU0OTQ2NSwiZXhwIjoxNzAxNTQ5NzY1fQ.BVuzCctG02nh9JTY6CTn2ETYJsZet5I0n2mxiUyBlRI
