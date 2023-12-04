@@ -48,26 +48,34 @@ export const POST_SIGN_UP: AuthController = async (req, res) => {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // Unique constraint violation
       if (error.code === "P2002") {
-        return response<AuthResponse>(res, {
-          auth: true,
-          endpoint: req.path,
-          error: {
-            message: "Username already taken!",
-            type: "username_taken",
+        return response<AuthResponse>(
+          res,
+          {
+            auth: false,
+            endpoint: req.path,
+            error: {
+              message: "Username already taken!",
+              type: "username_taken",
+            },
           },
-        });
+          401
+        );
       }
     }
 
     console.error("Internal error", error);
-    return response<AuthResponse>(res, {
-      auth: false,
-      endpoint: req.path,
-      error: {
-        message: "Something went wrong!",
-        type: "internal_error",
+    return response<AuthResponse>(
+      res,
+      {
+        auth: false,
+        endpoint: req.path,
+        error: {
+          message: "Something went wrong!",
+          type: "internal_error",
+        },
       },
-    });
+      401
+    );
   }
 };
 
@@ -81,28 +89,38 @@ export const POST_SIGN_IN: AuthController = async (req, res) => {
       },
     });
 
+    console.log(user);
+
     if (!user) {
-      return response(res, {
-        auth: false,
-        endpoint: req.path,
-        error: {
-          message: "User account not created",
-          type: "database_error",
+      return response(
+        res,
+        {
+          auth: false,
+          endpoint: req.path,
+          error: {
+            message: "User account not created",
+            type: "database_error",
+          },
         },
-      });
+        401
+      );
     }
 
     let comparePasswords = await compare(password, user.hash);
 
     if (!comparePasswords) {
-      return response<AuthResponse>(res, {
-        auth: false,
-        endpoint: req.path,
-        error: {
-          message: "Invalid password!",
-          type: "invalid_password",
+      return response<AuthResponse>(
+        res,
+        {
+          auth: false,
+          endpoint: req.path,
+          error: {
+            message: "Invalid password!",
+            type: "invalid_password",
+          },
         },
-      });
+        401
+      );
     }
 
     let accessToken = createAccessToken({
@@ -129,14 +147,18 @@ export const POST_SIGN_IN: AuthController = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return response<AuthResponse>(res, {
-      auth: false,
-      endpoint: req.path,
-      error: {
-        message: "Internal error",
-        type: "internal_error",
+    return response<AuthResponse>(
+      res,
+      {
+        auth: false,
+        endpoint: req.path,
+        error: {
+          message: "Internal error",
+          type: "internal_error",
+        },
       },
-    });
+      401
+    );
   }
 };
 
@@ -148,14 +170,18 @@ export const POST_CHECK_ACCESS_TOKEN: AuthController = (req, res) => {
     return response<AuthResponse>(res, { auth: true, endpoint: req.path });
   } catch (error) {
     console.error(error);
-    return response<AuthResponse>(res, {
-      auth: false,
-      endpoint: req.path,
-      error: {
-        message: "Invalid error",
-        type: "invalid_token",
+    return response<AuthResponse>(
+      res,
+      {
+        auth: false,
+        endpoint: req.path,
+        error: {
+          message: "Invalid error",
+          type: "invalid_token",
+        },
       },
-    });
+      401
+    );
   }
 };
 

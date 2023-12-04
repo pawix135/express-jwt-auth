@@ -43,10 +43,10 @@ const userExtension = Prisma.defineExtension({
         });
 
         if (email == checkIfUsed?.email!) {
-          throw Error("You're already using this email");
+          throw new Error("same_email");
         }
 
-        if (checkIfUsed?.email) throw Error("Email already taken!");
+        if (checkIfUsed?.email) throw Error("email_taken");
 
         await prisma.user.update({
           where: {

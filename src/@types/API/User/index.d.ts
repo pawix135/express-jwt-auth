@@ -5,7 +5,9 @@ type UserAccount =
   | "user_not_found"
   | "email_taken"
   | "password_change_error"
-  | "username_taken";
+  | "password_too_short"
+  | "username_taken"
+  | "same_email";
 type UserMiscError = "internal_error" | "database_error";
 
 type UserErrorType = UserAccount | UserMiscError;

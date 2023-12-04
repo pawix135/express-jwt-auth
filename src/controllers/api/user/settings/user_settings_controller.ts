@@ -1,5 +1,8 @@
-import { UserController } from "@/@types/API/User";
+import { UserController, UserErrorType, UserResponse } from "@/@types/API/User";
+import { errors } from "@/constants/errors";
 import { prisma } from "@/db/prisma";
+import { handleError } from "@/utils/errors";
+import { response } from "@/utils/response";
 import {
   UserChangeEmailSchema,
   UserChangePasswordSchema,
@@ -14,20 +17,31 @@ export const POST_CHANGE_EMAIL: UserController = async (req, res) => {
     let updateEmail = await prisma.user.setEmail(req.context.id, data.email);
 
     if (!updateEmail) {
-      return res.json({
-        ok: false,
-        endpoint: req.path,
-        error: {
-          message: "Email already taken",
-          type: "email_taken",
+      return response<UserResponse>(
+        res,
+        {
+          ok: false,
+          endpoint: req.path,
+          error: {
+            message: "Email already taken",
+            type: "email_taken",
+          },
         },
-      });
+        401
+      );
     }
 
-    return res.json({ ok: true, endpoint: req.path });
+    return response<UserResponse>(res, { ok: true, endpoint: req.path });
   } catch (error) {
     console.log(error);
-    return res.status(402).end();
+    return handleError<UserResponse>(res, error, {
+      endpoint: req.path,
+      ok: false,
+      error: {
+        message: "beak",
+        type: "database_error",
+      },
+    });
   }
 };
 
@@ -41,26 +55,51 @@ export const POST_CHANGE_USERNAME: UserController = async (req, res) => {
     );
 
     if (!updateUsername) {
-      return res.json({
-        ok: false,
-        endpoint: req.path,
-        error: {
-          message: "Username already taken!",
-          type: "username_taken",
+      return response<UserResponse>(
+        res,
+        {
+          ok: false,
+          endpoint: req.path,
+          error: {
+            message: "Username already taken!",
+            type: "username_taken",
+          },
         },
-      });
+        401
+      );
     }
 
     return res.json({ ok: true, endpoint: req.path });
   } catch (error) {
-    console.log(error);
-    return res.status(402).end();
+    return response<UserResponse>(
+      res,
+      {
+        endpoint: req.path,
+        ok: false,
+        error: {
+          message: "Email already taken!",
+          type: "email_taken",
+        },
+      },
+      401
+    );
   }
 };
 
 export const POST_CHANGE_PASSWORD: UserController = async (req, res) => {
   try {
     let { password } = UserChangePasswordSchema.parse(req.body);
+
+    if (password.length < 3) {
+      return response<UserResponse>(res, {
+        endpoint: req.path,
+        ok: false,
+        error: {
+          message: "Password too short, min 3 characters!",
+          type: "password_too_short",
+        },
+      });
+    }
 
     let newPasswordHash = await hash(password, 10);
 
