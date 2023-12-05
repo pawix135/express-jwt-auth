@@ -1,24 +1,15 @@
-type AuthEmailError = "email_taken" | "invalid_email" | "blocked_domain";
-type AuthUsernameError = "username_taken" | "too_long" | "too_short";
-type AuthPasswordError = "invalid_password";
-type AuthTokenError = "invalid_token";
+import { APIResponse } from "../";
 
-type AuthMiscError = "internal_error" | "database_error";
-
-type AuthErrorType =
-  | AuthEmailError
-  | AuthUsernameError
-  | AuthMiscError
-  | AuthPasswordError
-  | AuthTokenError;
-
-interface AuthError extends APIError<AuthErrorType> {}
-
-export interface AuthResponse extends APIResponse<AuthError> {
+export interface AuthResponse extends APIResponse {
   auth: boolean;
 }
 
 export interface AuthSignInResponse extends AuthResponse {
+  access_token: string;
+}
+export interface AuthSignUpResponse extends AuthResponse {}
+
+export interface AuthRevokeResponse extends AuthResponse {
   access_token: string;
 }
 

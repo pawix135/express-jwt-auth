@@ -12,7 +12,6 @@ export const getAccessToken = (headers: IncomingHttpHeaders): string => {
 // Parses refresh token from headers and returns it
 export const getRefreshToken = (cookies: Request["cookies"]): string => {
   let refreshToken = cookies[REFRESH_TOKEN_COOKIE_NAME];
-  if (!refreshToken) throw Error("Refresh token not found!");
   return refreshToken;
 };
 

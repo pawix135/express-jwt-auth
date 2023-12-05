@@ -1,17 +1,15 @@
+import { PasswordSchema, UsernameSchema } from "@/validators";
 import { z } from "zod";
 
 export const signInSchema = z.object({
-  username: z.string({
-    description: "Username",
-    required_error: "Username required!",
-  }),
-  password: z.string(),
+  username: UsernameSchema,
+  password: PasswordSchema,
 });
 
 export const signUpSchema = z.object({
-  username: z.string(),
-  password: z.string(),
+  username: UsernameSchema,
+  password: PasswordSchema,
 });
 
-export type SignIn = z.infer<typeof signInSchema>;
-export type SignUp = z.infer<typeof signUpSchema>;
+export type AuthSignInBody = z.infer<typeof signInSchema>;
+export type AuthSignUpBody = z.infer<typeof signUpSchema>;

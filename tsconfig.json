@@ -27,6 +27,7 @@
     "baseUrl": ".",
     "typeRoots": ["./src/@types", "./node_modules/@types"],
     "paths": {
+      "#/*": ["./docs/*"],
       "@/*": ["./src/*"],
       "@/controllers/api/*": ["./src/controllers/api/*"],
       "@/controllers/*": ["./src/controllers/*"],

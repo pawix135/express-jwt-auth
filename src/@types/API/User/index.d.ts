@@ -1,26 +1,29 @@
 import { User } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
+import { APIError, APIResponse } from "../";
 
-type UserAccount =
-  | "user_not_found"
-  | "email_taken"
-  | "password_change_error"
-  | "password_too_short"
-  | "username_taken"
-  | "same_email";
-type UserMiscError = "internal_error" | "database_error";
+interface UserError extends APIError {}
 
-type UserErrorType = UserAccount | UserMiscError;
-
-interface UserError extends APIError<UserErrorType> {}
-
-export interface UserResponse extends APIResponse<UserError> {
+export interface UserResponse extends APIResponse {
   ok: boolean;
-  me?: Omit<User, "hash">;
 }
 
-export type UserController = (
-  req: Request,
-  response: Response<UserResponse>,
-  next: NextFunction
-) => Response | Promise<Response>;
+export interface UserChangeSettingsResponse extends UserResponse {
+  success: boolean;
+}
+
+export interface UserChangeEmailResponse extends UserResponse {
+  success: boolean;
+}
+
+export interface UserChangePasswordResponse extends UserResponse {
+  success: boolean;
+}
+
+export interface UserChangeUsernameResponse extends UserResponse {
+  success: boolean;
+}
+
+export interface UserMeResponse extends UserResponse {
+  me?: Omit<User, "hash">;
+}
