@@ -12,9 +12,6 @@ import logger from "./middlewares/logger";
 // Initiate express server
 const app = express();
 
-// Requests logger
-app.use(logger);
-
 // Security and cors
 app.use(helmet());
 app.use(
@@ -23,18 +20,14 @@ app.use(
     credentials: true,
   })
 );
-/**
- * Code blocks are great for examples
- *
- * ```ts
- * // run typedoc --help for a list of supported languages
- * const instance = new MyClass();
- * ```
- */
+
 // Cookies, body and url parsers
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Requests logger
+app.use(logger);
 
 // Apply routes
 app.use("/api", apiRoute);
