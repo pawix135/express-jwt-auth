@@ -1,9 +1,24 @@
-interface APIError<ErrorType> {
+import { NextFunction, Request, Response } from "express";
+import { AuthErrorType } from "./Auth";
+import { UserErrorType } from "./User";
+
+type FieldError = {
   message: string;
-  type: ErrorType;
+  field: (string | number)[];
+};
+
+interface APIError {
+  message: string;
+  type: any;
 }
 
-interface APIResponse<T> {
-  endpoint: string;
-  error?: T | undefined;
+interface APIResponse {
+  endpoint?: string;
+  error?: APIError | FieldError[];
 }
+
+export type APIControler<T> = (
+  req: Request,
+  response: Response<T>,
+  next: NextFunction
+) => Response | Promise<Response>;

@@ -1,4 +1,11 @@
 import { Token } from "@/@types/Token";
+import {
+  ACCESS_TOKEN_SIGN_ERROR,
+  ACCESS_TOKEN_VERIFY_ERROR,
+  REFRESH_TOKEN_SIGN_ERROR,
+  REFRESH_TOKEN_VERIFY_ERROR,
+} from "@/constants/tokens";
+import { TokenError } from "@/errors/token_error";
 import { sign, verify, JwtPayload } from "jsonwebtoken";
 
 export const createAccessToken = (user: Token): string => {
@@ -9,13 +16,13 @@ export const createAccessToken = (user: Token): string => {
       },
       process.env.JWT_ACCESS_SECRET!,
       {
-        expiresIn: "5m",
+        expiresIn: "30m",
       }
     );
 
     return token;
   } catch (error) {
-    throw new Error("Something went wrong while creating access token!");
+    throw new TokenError(ACCESS_TOKEN_SIGN_ERROR);
   }
 };
 
@@ -26,7 +33,7 @@ export const verifyAccessToken = (
     let checkToken = verify(token, process.env.JWT_ACCESS_SECRET!);
     return checkToken;
   } catch (error) {
-    throw new Error("Invalid token");
+    throw new TokenError(ACCESS_TOKEN_VERIFY_ERROR);
   }
 };
 
@@ -44,7 +51,7 @@ export const createRefreshToken = (user: Token): string | null | JwtPayload => {
 
     return token;
   } catch (error) {
-    throw new Error("Something went wrong while creating refresh token!");
+    throw new TokenError(REFRESH_TOKEN_SIGN_ERROR);
   }
 };
 
@@ -52,9 +59,8 @@ export const verifyRefreshToken = (
   token: string
 ): JwtPayload | string | null => {
   try {
-    let checkToken = verify(token, process.env.JWT_REFRESH_SECRET!);
-    return checkToken;
+    return verify(token, process.env.JWT_REFRESH_SECRET!);
   } catch (error) {
-    throw new Error("Invalid refresh token");
+    throw new TokenError(REFRESH_TOKEN_VERIFY_ERROR);
   }
 };

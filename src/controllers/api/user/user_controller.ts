@@ -1,18 +1,17 @@
-import { UserController } from "@/@types/API/User";
+import { APIControler } from "@/@types/API";
+import { UserMeResponse } from "@/@types/API/User";
 import { prisma } from "@/db/prisma";
+import { exclude } from "@/utils/db";
+import { errorResponse } from "@/utils/response";
 
-export const GET_ME: UserController = async (req, res) => {
-  console.log(req.headers.authorization);
+export const GET_ME: APIControler<UserMeResponse> = async (req, res) => {
+  try {
+    let user = await prisma.user.findFirst({ where: { id: req.context.id } });
 
-  let user = await prisma.user.me(req.context.id);
+    if (!user) throw new Error("User not found");
 
-  if (!user) {
-    return res.json({
-      ok: false,
-      endpoint: req.path,
-      error: { message: "User not found", type: "user_not_found" },
-    });
+    return res.json({ ok: true, me: exclude(user, ["hash"]) });
+  } catch (error) {
+    return errorResponse<UserMeResponse>(res, { ok: false }, error);
   }
-
-  return res.json({ me: user, endpoint: req.path, ok: true });
 };

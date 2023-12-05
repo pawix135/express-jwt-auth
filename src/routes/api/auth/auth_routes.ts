@@ -1,5 +1,4 @@
 import {
-  POST_CHECK_ACCESS_TOKEN,
   POST_REVOKE_ACCESS_TOKEN,
   POST_SIGN_IN,
   POST_SIGN_UP,
@@ -11,7 +10,6 @@ const router = Express.Router();
 //POST ROUTES
 router.post("/signin", POST_SIGN_IN);
 router.post("/signup", POST_SIGN_UP);
-router.post("/checktoken", POST_CHECK_ACCESS_TOKEN);
 router.post("/revoke", POST_REVOKE_ACCESS_TOKEN);
 
 export default router;
