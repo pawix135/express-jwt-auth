@@ -12,7 +12,7 @@ type APIError =
       message: string;
       type: any;
     }
-  | FieldError[];
+  | FieldError;
 
 interface APIResponse {
   endpoint?: string;
